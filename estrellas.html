@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Un Viaje para Ti</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Montserrat:wght@300;500&family=Great+Vibes&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html {
+            height: 100%; width: 100%;
+            overflow: hidden;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #050a19;
+        }
+        
+        #main-container { position: relative; width: 100%; height: 100%; }
+
+        /* --- ESCENA 1 --- */
+        #stage-telescope {
+            position: absolute; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: linear-gradient(rgba(5, 10, 25, 0.4), rgba(5, 10, 25, 0.4)), url('Noche_2.png'); 
+            background-size: cover; background-position: center;
+            transition: transform 2s ease-in, opacity 1.5s ease-in;
+            z-index: 50;
+        }
+
+        .telescope-img { width: 280px; filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6)); margin-bottom: 30px; z-index: 2; }
+        #intro-video { display: none; width: 85%; max-width: 600px; border-radius: 15px; box-shadow: 0 0 30px rgba(255, 215, 0, 0.4); margin-bottom: 20px; z-index: 2; }
+
+        .btn-mirame {
+            padding: 15px 40px; font-size: 1.5rem; background: rgba(0, 0, 0, 0.6);
+            color: #FFD700; border: 2px solid #FFD700; border-radius: 50px;
+            cursor: pointer; font-family: 'Cinzel Decorative', cursive;
+            animation: pulseGold 2s infinite; letter-spacing: 2px; backdrop-filter: blur(5px); z-index: 2;
+        }
+
+        @keyframes pulseGold {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); transform: scale(1); }
+            70% { box-shadow: 0 0 0 20px rgba(255, 215, 0, 0); transform: scale(1.05); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); transform: scale(1); }
+        }
+
+        .zooming-in { transform: scale(10); opacity: 0; }
+
+        /* --- ESCENA 2: ESPACIO --- */
+        #stage-space {
+            position: absolute; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, #02040a 0%, #09132b 100%);
+            opacity: 0; pointer-events: none; transition: opacity 2s ease-out;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .space-visible { opacity: 1 !important; pointer-events: auto !important; }
+        .star { position: absolute; background-color: white; border-radius: 50%; animation: twinkle infinite alternate; }
+        @keyframes twinkle { from { opacity: 0.2; } to { opacity: 1; box-shadow: 0 0 8px #fff; } }
+
+        .declaration-container { max-width: 600px; width: 90%; text-align: center; z-index: 10; margin-bottom: 30px; padding: 20px; }
+        .romantic-title { font-family: 'Cinzel Decorative', cursive; color: #E5E4E2; font-size: 1.8rem; margin-bottom: 20px; animation: silverGlow 3s infinite alternate; }
+        .romantic-text { color: #FBFCF8; font-size: 1.2rem; line-height: 1.8; font-weight: 300; animation: pearlGlow 4s infinite alternate; }
+
+        @keyframes silverGlow {
+            from { text-shadow: 0 0 5px #fff, 0 0 10px #c0c0c0; }
+            to { text-shadow: 0 0 15px #fff, 0 0 25px #fff, 0 0 10px #c0c0c0; }
+        }
+        @keyframes pearlGlow {
+            from { text-shadow: 0 0 2px rgba(255,255,255,0.3); }
+            to { text-shadow: 0 0 10px rgba(255,255,255,0.8); }
+        }
+
+        .travel-planet-container { display: flex; flex-direction: column; align-items: center; cursor: pointer; z-index: 20; transition: transform 0.3s; }
+        .travel-planet-container:hover { transform: scale(1.1); }
+        .planet-gif { width: 110px; height: auto; margin-bottom: 10px; filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.4)); }
+        .travel-text { color: #ffffff; letter-spacing: 3px; font-size: 0.8rem; text-shadow: 0 0 8px rgba(255,255,255,0.5); }
+
+        /* Fuegos y meteoritos */
+        .firework-particle { position: absolute; width: 4px; height: 4px; border-radius: 50%; pointer-events: none; z-index: 5; }
+        .rocket { position: absolute; width: 3px; height: 15px; background: #fff; border-radius: 50%; z-index: 5; }
+
+        /* --- ESCENA 3 (POETAS) --- */
+        #stage-planet {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000;
+            background-image: url('fondo_2.png'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 3s ease-in-out; z-index: 100;
+        }
+        #stage-planet::after {
+            content: ''; position: absolute; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.3); z-index: 1;
+        }
+
+        .planet-image {
+            position: absolute; max-width: 85%; max-height: 75vh; border-radius: 15px;
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.2); opacity: 0; 
+            transition: opacity 2s ease-in-out; border: 2px solid #fff; z-index: 5;
+        }
+        .img-active { opacity: 1; }
+
+        /* --- MENSAJE FINAL REDISEÑADO --- */
+        .final-message { 
+            font-family: 'Great Vibes', cursive; 
+            color: #ff3366; /* Rosa vibrante romántico */
+            font-size: 4.5rem; /* Agrandado sustancialmente */
+            text-align: center; 
+            opacity: 0; 
+            transition: opacity 3s ease-in; 
+            z-index: 10;
+            text-shadow: 0 0 15px rgba(255, 51, 102, 0.6), 2px 2px 10px rgba(0,0,0,0.8);
+            padding: 20px;
+        }
+        .final-active { opacity: 1; }
+
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" loop>
+        <source src="Musica_1.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="poeta-music" loop>
+        <source src="Musica_2.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="main-container">
+        <div id="stage-telescope">
+            <img src="Telescopio.png" id="telescope-img" class="telescope-img">
+            <video id="intro-video" playsinline>
+                <source src="Telespocio.mp4" type="video/mp4">
+            </video>
+            <button id="btn-mirame" class="btn-mirame" onclick="handleFirstClick()">Mírame</button>
+        </div>
+
+        <div id="stage-space">
+            <div id="fx-container" style="position:absolute; width:100%; height:100%; top:0; left:0;"></div>
+            <div class="declaration-container">
+                <h2 class="romantic-title">Una declaración eterna</h2>
+                <p class="romantic-text">
+                    "Si la vida me diera mil oportunidades de renacer en el instante exacto en que te conocí, no lo dudaría ni un segundo. <br><br>
+                    Elegiría volver a nacer en aquel día, una y otra vez, solo para tener la dicha de ser aquel a quien tú elegiste. Porque no fue casualidad, fue destino. <br><br>
+                    Belén: tú eres, y siempre serás, mi destino".<br><br>
+                    <strong>¡¡Te amo, Belén!!</strong>
+                </p>
+            </div>
+            <div class="travel-planet-container" onclick="warpToPlanet()">
+                <img src="Planeta_1.gif" alt="Planeta" class="planet-gif">
+                <div class="travel-text">VIAJAR AQUÍ</div>
+            </div>
+        </div>
+
+        <div id="stage-planet">
+            <img src="Poeta_1.jpeg" class="planet-image img-1">
+            <img src="Poeta_2.jpeg" class="planet-image img-2">
+            <h1 class="final-message">¡Feliz 14 de febrero mi Amor!</h1>
+        </div>
+    </div>
+
+    <script>
+        let fireworkInterval;
+        let meteorInterval;
+        let belenInterval;
+        const bgMusic = document.getElementById('bg-music');
+        const poetaMusic = document.getElementById('poeta-music');
+
+        function createStars() {
+            const container = document.getElementById('stage-space');
+            for (let i = 0; i < 150; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.top = Math.random() * 100 + 'vh';
+                const size = Math.random() * 2 + 1 + 'px';
+                star.style.width = size; star.style.height = size;
+                star.style.animationDelay = Math.random() * 2 + 's';
+                container.appendChild(star);
+            }
+        }
+        createStars();
+
+        function handleFirstClick() {
+            document.getElementById('telescope-img').style.display = 'none';
+            document.getElementById('btn-mirame').style.display = 'none';
+            const v = document.getElementById('intro-video');
+            v.style.display = 'block';
+            v.play();
+        }
+
+        document.getElementById('intro-video').onended = function() {
+            const telescopeStage = document.getElementById('stage-telescope');
+            const spaceStage = document.getElementById('stage-space');
+            telescopeStage.classList.add('zooming-in');
+            
+            setTimeout(() => {
+                telescopeStage.style.display = 'none';
+                spaceStage.classList.add('space-visible');
+                bgMusic.play().catch(e => console.log("Audio bloqueado"));
+
+                meteorInterval = setInterval(launchMeteor, 400); 
+                fireworkInterval = setInterval(() => {
+                    if(Math.random() > 0.3) launchFirework('heart');
+                }, 1200);
+                belenInterval = setInterval(() => {
+                    launchFirework('name');
+                }, 5000);
+            }, 1800);
+        };
+
+        function warpToPlanet() {
+            bgMusic.pause();
+            bgMusic.currentTime = 0;
+
+            clearInterval(fireworkInterval);
+            clearInterval(meteorInterval);
+            clearInterval(belenInterval);
+
+            document.getElementById('stage-space').style.opacity = '0';
+            const planetStage = document.getElementById('stage-planet');
+            const img1 = document.querySelector('.img-1');
+            const img2 = document.querySelector('.img-2');
+            const finalMsg = document.querySelector('.final-message');
+
+            setTimeout(() => {
+                document.getElementById('stage-space').style.display = 'none';
+                planetStage.style.opacity = '1';
+                planetStage.style.pointerEvents = 'auto';
+
+                // INICIA MÚSICA 2 (Ya no se detendrá hasta el cierre)
+                poetaMusic.play();
+
+                setTimeout(() => { img1.classList.add('img-active'); }, 500);
+                
+                setTimeout(() => {
+                    img1.classList.remove('img-active');
+                    setTimeout(() => { img2.classList.add('img-active'); }, 1500);
+                }, 8000);
+
+                setTimeout(() => {
+                    img2.classList.remove('img-active');
+                    // Música 2 sigue sonando aquí...
+                    setTimeout(() => { finalMsg.classList.add('final-active'); }, 1500);
+                }, 16000);
+            }, 2000);
+        }
+
+        /* --- Funciones de efectos visuales --- */
+        function launchFirework(type) {
+            const container = document.getElementById('fx-container');
+            const rocket = document.createElement('div');
+            rocket.classList.add('rocket');
+            const startX = 10 + Math.random() * 80;
+            rocket.style.left = startX + 'vw'; rocket.style.bottom = '0vh';
+            container.appendChild(rocket);
+            const targetY = 20 + Math.random() * 50;
+            const animation = rocket.animate([{ bottom: '0vh' }, { bottom: targetY + 'vh' }], { duration: 1500, easing: 'ease-out' });
+            animation.onfinish = () => {
+                if(type === 'heart') createHeartExplosion(startX, targetY);
+                else createNameExplosion(startX, targetY);
+                rocket.remove();
+            };
+        }
+
+        function createHeartExplosion(x, y) {
+            const container = document.getElementById('fx-container');
+            const particles = 35;
+            const color = `hsl(${Math.random() * 60 + 330}, 100%, 75%)`;
+            for (let i = 0; i < particles; i++) {
+                const p = document.createElement('div');
+                p.classList.add('firework-particle');
+                p.style.backgroundColor = color;
+                p.style.left = x + 'vw'; p.style.bottom = y + 'vh';
+                container.appendChild(p);
+                const angle = (i / particles) * Math.PI * 2;
+                const dx = 16 * Math.pow(Math.sin(angle), 3);
+                const dy = 13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle);
+                p.animate([{ transform: 'translate(0, 0) scale(1.5)', opacity: 1 }, { transform: `translate(${dx * 7}px, ${-dy * 7}px) scale(0)`, opacity: 0 }], { duration: 2000 });
+                setTimeout(() => p.remove(), 2000);
+            }
+        }
+
+        function createNameExplosion(x, y) {
+            const container = document.getElementById('fx-container');
+            const nameTag = document.createElement('div');
+            nameTag.innerText = "Belén";
+            nameTag.style.position = 'absolute';
+            nameTag.style.left = x + 'vw'; nameTag.style.bottom = y + 'vh';
+            nameTag.style.transform = 'translate(-50%, 50%)';
+            nameTag.style.fontFamily = "'Cinzel Decorative', cursive";
+            nameTag.style.fontSize = '3.5rem';
+            nameTag.style.color = 'white';
+            nameTag.style.textShadow = `0 0 10px #fff, 0 0 20px #ff0077`;
+            container.appendChild(nameTag);
+            nameTag.animate([{ opacity: 0, scale: 0.2 }, { opacity: 1, scale: 1.2, offset: 0.2 }, { opacity: 0, scale: 1.5 }], { duration: 4000 });
+            setTimeout(() => nameTag.remove(), 4000);
+        }
+
+        function launchMeteor() {
+            const container = document.getElementById('fx-container');
+            const meteor = document.createElement('div');
+            meteor.style.position = 'absolute';
+            meteor.style.width = '2px'; meteor.style.height = '2px';
+            meteor.style.backgroundColor = 'white';
+            container.appendChild(meteor);
+            const startX = Math.random() * window.innerWidth;
+            const startY = Math.random() * (window.innerHeight / 1.5);
+            meteor.animate([{ transform: `translate(${startX}px, ${startY}px)`, opacity: 0.8 }, { transform: `translate(${startX - 400}px, ${startY + 400}px)`, opacity: 0 }], { duration: 1500 });
+            setTimeout(() => meteor.remove(), 1500);
+        }
+    </script>
+</body>
+</html>
